@@ -126,15 +126,30 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
 
 // ── AI 请求代理 ──────────────────────────────────────────────
 
-async function handleAIRequest(payload: { prompt: string; content: string }) {
-  const config = await new Promise<any>((resolve) => {
+async function getAIConfig() {
+  // 1. Try user-saved config
+  const saved = await new Promise<any>((resolve) => {
     chrome.storage.local.get(['aiConfig'], (result) => {
       resolve(result.aiConfig)
     })
   })
+  if (saved?.apiKey) return saved
+
+  // 2. Try dev env config (development only)
+  try {
+    const { getDevConfig } = await import('../shared/ai/dev-config')
+    const devConfig = getDevConfig()
+    if (devConfig?.apiKey) return devConfig
+  } catch {}
+
+  return null
+}
+
+async function handleAIRequest(payload: { prompt: string; content: string }) {
+  const config = await getAIConfig()
 
   if (!config?.apiKey) {
-    throw new Error('API Key 未配置')
+    throw new Error('API Key 未配置，请在设置中配置或添加 .env 文件')
   }
 
   const response = await fetch(`${config.baseUrl}/v1/chat/completions`, {
