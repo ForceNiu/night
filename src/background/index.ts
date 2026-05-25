@@ -1,40 +1,92 @@
 // Background Service Worker
 
-// 守护时段：00:00 - 06:00
 const GUARD_START_HOUR = 0
 const GUARD_END_HOUR = 6
+const REMINDER_DELAY_MINUTES = 30
 
 function isGuardHour(): boolean {
   const hour = new Date().getHours()
   return hour >= GUARD_START_HOUR && hour < GUARD_END_HOUR
 }
 
-// 检查是否在守护时段
-chrome.alarms.create('check-guard-hour', { periodInMinutes: 30 })
+// ── 守护时段检测 ──────────────────────────────────────────────
+
+chrome.alarms.create('check-guard-hour', { periodInMinutes: 1 })
 
 chrome.alarms.onAlarm.addListener((alarm) => {
   if (alarm.name === 'check-guard-hour') {
-    if (isGuardHour()) {
-      // 设置图标为活跃状态
-      chrome.action.setBadgeText({ text: ' ' })
-      chrome.action.setBadgeBackgroundColor({ color: '#ef4444' })
-    } else {
-      // 清除 badge
-      chrome.action.setBadgeText({ text: '' })
-    }
+    updateGuardState()
+  }
+  if (alarm.name === 'gentle-reminder') {
+    showGentleReminder()
   }
 })
 
-// 点击图标时的行为
+let wasGuardHour = false
+
+function updateGuardState() {
+  const nowGuard = isGuardHour()
+
+  // 刚进入守护时段
+  if (nowGuard && !wasGuardHour) {
+    chrome.action.setBadgeText({ text: ' ' })
+    chrome.action.setBadgeBackgroundColor({ color: '#ef4444' })
+    chrome.notifications.create('guard-enter', {
+      type: 'basic',
+      iconUrl: chrome.runtime.getURL('src/assets/icons/icon128.png'),
+      title: '深夜树洞',
+      message: '夜深了，如果心里有事，我在这里。',
+      priority: 0,
+    })
+  }
+
+  // 刚退出守护时段
+  if (!nowGuard && wasGuardHour) {
+    chrome.action.setBadgeText({ text: '' })
+    chrome.alarms.clear('gentle-reminder')
+  }
+
+  wasGuardHour = nowGuard
+}
+
+// 启动时立即检查一次
+updateGuardState()
+
+// ── 30 分钟二次提醒 ─────────────────────────────────────────
+
+function showGentleReminder() {
+  if (!isGuardHour()) return
+
+  chrome.notifications.create('gentle-reminder', {
+    type: 'basic',
+    iconUrl: chrome.runtime.getURL('src/assets/icons/icon128.png'),
+    title: '深夜树洞',
+    message: '已经过去一会儿了，感觉好一点了吗？',
+    priority: 0,
+  })
+}
+
+// ── 点击图标行为 ─────────────────────────────────────────────
+
 chrome.action.onClicked.addListener(() => {
   if (isGuardHour()) {
-    // 在守护时段，打开干预页面
     chrome.tabs.create({ url: 'src/newtab/index.html' })
+    // 用户打开了干预页，启动 30 分钟提醒
+    chrome.alarms.create('gentle-reminder', { delayInMinutes: REMINDER_DELAY_MINUTES })
   }
-  // 非守护时段，popup 会自动弹出
 })
 
-// 消息处理：来自 popup/newtab 的请求
+// ── 通知点击 ─────────────────────────────────────────────────
+
+chrome.notifications.onClicked.addListener((notificationId) => {
+  if (notificationId === 'guard-enter' || notificationId === 'gentle-reminder') {
+    chrome.tabs.create({ url: 'src/newtab/index.html' })
+    chrome.notifications.clear(notificationId)
+  }
+})
+
+// ── 消息处理 ─────────────────────────────────────────────────
+
 chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
   if (message.type === 'GET_AI_CONFIG') {
     chrome.storage.local.get(['aiConfig'], (result) => {
@@ -51,13 +103,28 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
   }
 
   if (message.type === 'AI_REQUEST') {
-    // 代理 AI API 请求
     handleAIRequest(message.payload)
       .then(result => sendResponse({ success: true, data: result }))
       .catch(error => sendResponse({ success: false, error: error.message }))
     return true
   }
+
+  if (message.type === 'START_REMINDER') {
+    // 前端通知：用户进入干预流程，启动 30 分钟提醒
+    chrome.alarms.create('gentle-reminder', { delayInMinutes: REMINDER_DELAY_MINUTES })
+    sendResponse({ success: true })
+    return true
+  }
+
+  if (message.type === 'CANCEL_REMINDER') {
+    // 前端通知：用户完成流程，取消提醒
+    chrome.alarms.clear('gentle-reminder')
+    sendResponse({ success: true })
+    return true
+  }
 })
+
+// ── AI 请求代理 ──────────────────────────────────────────────
 
 async function handleAIRequest(payload: { prompt: string; content: string }) {
   const config = await new Promise<any>((resolve) => {

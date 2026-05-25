@@ -5,4 +5,11 @@ import manifest from './manifest.json'
 
 export default defineConfig({
   plugins: [react(), crx({ manifest })],
+  build: {
+    rollupOptions: {
+      input: {
+        history: 'src/history/index.html',
+      },
+    },
+  },
 })

@@ -1,0 +1,156 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+  color: #e2e8f0;
+  min-height: 100vh;
+}
+
+.history-page {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 48px 24px;
+}
+
+.history-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.history-header h1 {
+  font-size: 28px;
+  font-weight: 600;
+  color: #f1f5f9;
+  margin-bottom: 8px;
+}
+
+.history-header p {
+  color: #64748b;
+  font-size: 14px;
+}
+
+.stats-bar {
+  display: flex;
+  gap: 24px;
+  justify-content: center;
+  margin-bottom: 32px;
+}
+
+.stat-item {
+  text-align: center;
+}
+
+.stat-number {
+  font-size: 32px;
+  font-weight: 300;
+  color: #818cf8;
+}
+
+.stat-label {
+  font-size: 12px;
+  color: #64748b;
+  margin-top: 4px;
+}
+
+.emotion-cloud {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  margin-bottom: 32px;
+}
+
+.emotion-chip {
+  padding: 6px 14px;
+  border-radius: 16px;
+  font-size: 13px;
+  border: 1px solid #334155;
+  color: #94a3b8;
+  background: rgba(15, 23, 42, 0.4);
+}
+
+.emotion-chip.count-3 { border-color: #818cf8; color: #c7d2fe; }
+.emotion-chip.count-2 { border-color: #6366f1; color: #a5b4fc; }
+
+.timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.timeline-item {
+  padding: 20px;
+  border-radius: 12px;
+  background: rgba(15, 23, 42, 0.4);
+  border: 1px solid #1e293b;
+  transition: border-color 0.2s;
+}
+
+.timeline-item:hover {
+  border-color: #334155;
+}
+
+.timeline-time {
+  font-size: 12px;
+  color: #64748b;
+  margin-bottom: 8px;
+}
+
+.timeline-content {
+  font-size: 15px;
+  color: #cbd5e1;
+  line-height: 1.6;
+  margin-bottom: 10px;
+}
+
+.timeline-summary {
+  font-size: 13px;
+  color: #94a3b8;
+  line-height: 1.5;
+  padding: 10px;
+  border-radius: 8px;
+  background: rgba(30, 41, 59, 0.4);
+}
+
+.timeline-tags {
+  display: flex;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.timeline-tag {
+  font-size: 11px;
+  padding: 3px 10px;
+  border-radius: 10px;
+  background: rgba(129, 140, 248, 0.1);
+  color: #a5b4fc;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 60px 0;
+  color: #475569;
+}
+
+.back-btn {
+  display: inline-block;
+  margin-bottom: 24px;
+  padding: 8px 16px;
+  border: 1px solid #334155;
+  border-radius: 8px;
+  background: transparent;
+  color: #94a3b8;
+  font-size: 14px;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+
+.back-btn:hover {
+  border-color: #475569;
+  color: #e2e8f0;
+}
