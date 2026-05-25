@@ -1,0 +1,31 @@
+{
+  "manifest_version": 3,
+  "name": "深夜树洞",
+  "version": "0.1.0",
+  "description": "一个为深夜陷入懊悔情绪的人提供情绪出口的 Chrome 浏览器插件",
+  "permissions": [
+    "storage",
+    "alarms",
+    "tabs"
+  ],
+  "action": {
+    "default_popup": "src/popup/index.html",
+    "default_icon": {
+      "16": "src/assets/icons/icon16.png",
+      "48": "src/assets/icons/icon48.png",
+      "128": "src/assets/icons/icon128.png"
+    }
+  },
+  "background": {
+    "service_worker": "src/background/index.ts",
+    "type": "module"
+  },
+  "chrome_url_overrides": {
+    "newtab": "src/newtab/index.html"
+  },
+  "icons": {
+    "16": "src/assets/icons/icon16.png",
+    "48": "src/assets/icons/icon48.png",
+    "128": "src/assets/icons/icon128.png"
+  }
+}
