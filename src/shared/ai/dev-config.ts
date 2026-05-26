@@ -3,7 +3,8 @@
 // In development, you can use .env file
 
 export function getDevConfig() {
-  if (import.meta.env.DEV) {
+  // 开发模式或测试模式都返回配置
+  if (import.meta.env.DEV || import.meta.env.VITE_TEST_MODE === 'true') {
     return {
       apiKey: import.meta.env.VITE_AI_API_KEY || '',
       baseUrl: import.meta.env.VITE_AI_BASE_URL || 'https://api.deepseek.com',
