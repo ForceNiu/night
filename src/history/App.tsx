@@ -2,6 +2,14 @@ import { useState, useEffect } from 'react'
 import { getRecords } from '../shared/storage/records'
 import type { Record as NightRecord, EmotionTag } from '../shared/types'
 
+const EMOTION_ICONS: Record<EmotionTag, string> = {
+  '后悔': '😔',
+  '焦虑': '😰',
+  '孤独': '🫥',
+  '愤怒': '😤',
+  '其他': '😶',
+}
+
 function formatDate(ts: number): string {
   const d = new Date(ts)
   const y = d.getFullYear()
@@ -34,7 +42,7 @@ function App() {
 
   return (
     <div className="history-page">
-      <button className="back-btn" onClick={() => window.close()}>
+      <button className="back-btn ripple" onClick={() => window.close()}>
         返回
       </button>
 
@@ -67,6 +75,7 @@ function App() {
                   key={tag}
                   className={`emotion-chip ${count >= 3 ? 'count-3' : count >= 2 ? 'count-2' : ''}`}
                 >
+                  <span className="emotion-icon">{EMOTION_ICONS[tag]}</span>
                   {tag} ×{count}
                 </span>
               ))}
@@ -88,7 +97,10 @@ function App() {
                 {record.emotionTags.length > 0 && (
                   <div className="timeline-tags">
                     {record.emotionTags.map(tag => (
-                      <span key={tag} className="timeline-tag">{tag}</span>
+                      <span key={tag} className="timeline-tag">
+                        <span className="tag-icon">{EMOTION_ICONS[tag]}</span>
+                        {tag}
+                      </span>
                     ))}
                   </div>
                 )}

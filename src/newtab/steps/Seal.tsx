@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { generateSummary } from '../../shared/ai/client'
 import { addRecord } from '../../shared/storage/records'
 import type { EmotionTag } from '../../shared/types'
+import ChatBubble from '../components/ChatBubble'
 
 interface SealProps {
   content: string
@@ -41,7 +42,6 @@ function Seal({ content, decompose, selectedDecompose, emotionTags, onDone }: Se
       triggerType: 'manual',
     })
     setSaved(true)
-    // 通知 background 取消 30 分钟提醒
     chrome.runtime.sendMessage({ type: 'CANCEL_REMINDER' })
   }
 
@@ -49,12 +49,11 @@ function Seal({ content, decompose, selectedDecompose, emotionTags, onDone }: Se
     return (
       <div className="step-container">
         <h2>已封存</h2>
-        <p className="warm-text">
-          今晚的事，留在这里就好。<br />
-          好好休息。
-        </p>
+        <ChatBubble type="ai">
+          今晚的事，留在这里就好。好好休息。
+        </ChatBubble>
         <div className="button-group">
-          <button className="primary-btn" onClick={onDone}>
+          <button className="primary-btn ripple" onClick={onDone}>
             关闭
           </button>
         </div>
@@ -66,17 +65,26 @@ function Seal({ content, decompose, selectedDecompose, emotionTags, onDone }: Se
     <div className="step-container">
       <h2>封存今晚</h2>
       {loading ? (
-        <p className="warm-text">正在为你写下总结……</p>
+        <>
+          <ChatBubble type="ai">
+            正在为你写下总结……
+          </ChatBubble>
+          <div className="loading-pulse">
+            <div className="dot"></div>
+            <div className="dot"></div>
+            <div className="dot"></div>
+          </div>
+        </>
       ) : (
-        <div className="summary-card">
-          <p>{summary}</p>
-        </div>
+        <ChatBubble type="ai">
+          {summary}
+        </ChatBubble>
       )}
       <div className="button-group">
-        <button className="primary-btn" onClick={handleSeal} disabled={loading}>
+        <button className="primary-btn ripple" onClick={handleSeal} disabled={loading}>
           封存
         </button>
-        <button className="secondary-btn" onClick={onDone}>
+        <button className="secondary-btn ripple" onClick={onDone}>
           不保存，直接离开
         </button>
       </div>

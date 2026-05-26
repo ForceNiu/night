@@ -6,7 +6,7 @@
 
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  background: #1a1a2e;
+  background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
   color: #eee;
   width: 320px;
   min-height: 400px;
@@ -34,9 +34,11 @@ h1 {
 
 .last-record {
   padding: 14px;
-  border-radius: 10px;
+  border-radius: 12px;
   background: rgba(15, 23, 42, 0.5);
   border: 1px solid #1e293b;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
 
 .record-time {
@@ -67,16 +69,23 @@ h1 {
 .primary-action {
   padding: 12px;
   border: none;
-  border-radius: 8px;
+  border-radius: 12px;
   background: #818cf8;
   color: #fff;
   font-size: 15px;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: all 0.2s;
+  position: relative;
+  overflow: hidden;
 }
 
 .primary-action:hover:not(:disabled) {
   background: #6366f1;
+  box-shadow: 0 4px 12px rgba(129, 140, 248, 0.3);
+}
+
+.primary-action:active:not(:disabled) {
+  transform: scale(0.98);
 }
 
 .primary-action:disabled {
@@ -88,11 +97,13 @@ h1 {
   padding: 10px;
   background: transparent;
   border: 1px solid #334155;
-  border-radius: 8px;
+  border-radius: 12px;
   color: #94a3b8;
   font-size: 14px;
   cursor: pointer;
-  transition: border-color 0.2s, color 0.2s;
+  transition: all 0.2s;
+  position: relative;
+  overflow: hidden;
 }
 
 .history-link:hover {
@@ -107,6 +118,7 @@ h1 {
   color: #475569;
   font-size: 12px;
   cursor: pointer;
+  transition: color 0.2s;
 }
 
 .settings-btn:hover {
@@ -125,10 +137,12 @@ h1 {
   font-size: 12px;
   color: #64748b;
   line-height: 1.5;
-  padding: 10px;
-  border-radius: 8px;
+  padding: 12px;
+  border-radius: 12px;
   background: rgba(15, 23, 42, 0.4);
   border: 1px solid #1e293b;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
 
 .settings-section {
@@ -151,20 +165,52 @@ h1 {
 }
 
 .form-group input {
-  padding: 8px 10px;
+  padding: 10px 12px;
   border: 1px solid #334155;
-  border-radius: 6px;
+  border-radius: 10px;
   background: rgba(15, 23, 42, 0.6);
   color: #e2e8f0;
   font-size: 13px;
   outline: none;
-  transition: border-color 0.2s;
+  transition: all 0.2s;
 }
 
 .form-group input:focus {
   border-color: #818cf8;
+  box-shadow: 0 0 0 3px rgba(129, 140, 248, 0.15);
 }
 
 .form-group input::placeholder {
   color: #334155;
+}
+
+/* ── 响应式布局 ────────────────────────────────────────── */
+
+@media (max-width: 360px) {
+  .popup-container {
+    padding: 20px;
+  }
+
+  h1 {
+    font-size: 18px;
+  }
+
+  .warm-message {
+    font-size: 13px;
+  }
+
+  .primary-action {
+    padding: 10px;
+    font-size: 14px;
+  }
+
+  .history-link {
+    padding: 8px;
+    font-size: 13px;
+  }
+
+  .form-group input {
+    padding: 8px 10px;
+    font-size: 12px;
+  }
 }

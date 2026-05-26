@@ -28,7 +28,7 @@ function WriteThoughts({ onNext }: WriteThoughtsProps) {
       />
       <div className="button-group">
         <button
-          className="primary-btn"
+          className="primary-btn ripple"
           onClick={handleSubmit}
           disabled={!content.trim()}
         >

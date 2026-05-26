@@ -30,7 +30,7 @@ function GentleReminder({ onNext }: GentleReminderProps) {
         {countdown > 0 ? (
           <p className="countdown">{countdown}</p>
         ) : (
-          <button className="continue-btn" onClick={onNext}>
+          <button className="continue-btn ripple" onClick={onNext}>
             继续浏览
           </button>
         )}
@@ -46,10 +46,10 @@ function GentleReminder({ onNext }: GentleReminderProps) {
         深呼吸，先停一下。
       </p>
       <div className="button-group">
-        <button className="primary-btn" onClick={onNext}>
+        <button className="primary-btn ripple" onClick={onNext}>
           我想说说
         </button>
-        <button className="secondary-btn" onClick={handleContinueAnyway}>
+        <button className="secondary-btn ripple" onClick={handleContinueAnyway}>
           我还是要继续
         </button>
       </div>

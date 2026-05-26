@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { decomposeThoughts } from '../../shared/ai/client'
+import ChatBubble from '../components/ChatBubble'
 
 interface DecomposeProps {
   content: string
@@ -28,9 +29,13 @@ function Decompose({ content, onNext }: DecomposeProps) {
     return (
       <div className="step-container">
         <h2>帮你理一理</h2>
-        <p className="warm-text">正在拆解你的想法……</p>
-        <div className="loading-dots">
-          <span>·</span><span>·</span><span>·</span>
+        <ChatBubble type="ai">
+          正在拆解你的想法……
+        </ChatBubble>
+        <div className="loading-pulse">
+          <div className="dot"></div>
+          <div className="dot"></div>
+          <div className="dot"></div>
         </div>
       </div>
     )
@@ -40,9 +45,11 @@ function Decompose({ content, onNext }: DecomposeProps) {
     return (
       <div className="step-container">
         <h2>帮你理一理</h2>
-        <p className="warm-text">AI 暂时无法响应，但没关系，你可以直接跳过这一步。</p>
+        <ChatBubble type="ai">
+          AI 暂时无法响应，但没关系，你可以直接跳过这一步。
+        </ChatBubble>
         <div className="button-group">
-          <button className="secondary-btn" onClick={() => onNext([], '')}>
+          <button className="secondary-btn ripple" onClick={() => onNext([], '')}>
             跳过拆解
           </button>
         </div>
@@ -53,12 +60,14 @@ function Decompose({ content, onNext }: DecomposeProps) {
   return (
     <div className="step-container">
       <h2>帮你理一理</h2>
-      <p className="warm-text">你的想法里可能藏着这几个小问题，选一个你想面对的：</p>
+      <ChatBubble type="ai">
+        你的想法里可能藏着这几个小问题，选一个你想面对的：
+      </ChatBubble>
       <div className="decompose-list">
         {items.map((item, i) => (
           <button
             key={i}
-            className={`decompose-item ${selected === item ? 'selected' : ''}`}
+            className={`decompose-item ripple ${selected === item ? 'selected' : ''}`}
             onClick={() => setSelected(item)}
           >
             {item}
@@ -67,13 +76,13 @@ function Decompose({ content, onNext }: DecomposeProps) {
       </div>
       <div className="button-group">
         <button
-          className="primary-btn"
+          className="primary-btn ripple"
           onClick={() => selected && onNext(items, selected)}
           disabled={!selected}
         >
           面对这个
         </button>
-        <button className="secondary-btn" onClick={() => onNext(items, items[0] || '')}>
+        <button className="secondary-btn ripple" onClick={() => onNext(items, items[0] || '')}>
           跳过选择
         </button>
       </div>
