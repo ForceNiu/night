@@ -57,3 +57,8 @@ Thumbs.db
 
 # Development notes (not for git)
 docs/development-review.md
+docs/issues-log.md
+docs/decisions.md
+docs/process-improvements.md
+docs/templates/
+docs/README.md
