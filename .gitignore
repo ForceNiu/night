@@ -54,3 +54,6 @@ Thumbs.db
 
 # Claude Code
 .claude/
+
+# Development notes (not for git)
+docs/development-review.md
