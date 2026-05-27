@@ -96,99 +96,16 @@ src/
 - 所有 AI 调用封装在 `shared/ai/` 下，不散落在组件中
 - 所有存储操作封装在 `shared/storage/` 下
 
-## 端侧开发注意事项
+## 端侧开发核心原则
 
-### Service Worker 生命周期
+**重要：** Chrome MV3 Service Worker 会频繁重启，内存状态不可靠。
 
-**重要：** Chrome MV3 Service Worker 会频繁重启（30 秒空闲即终止），内存状态不可靠。
+**三条铁律：**
+1. **状态持久化** — 内存状态必须用 chrome.storage 保存
+2. **防御性编程** — 所有异步操作必须 try/catch
+3. **安全编码** — API Key 用 storage 存，输入必须验证
 
-```javascript
-// ❌ 错误：内存状态会丢失
-let wasGuardHour = false;
-
-// ✅ 正确：使用 chrome.storage 持久化
-const { wasGuardHour } = await chrome.storage.session.get('wasGuardHour');
-```
-
-**检查清单：**
-- [ ] 内存状态是否会在 Service Worker 重启后丢失？
-- [ ] 关键状态是否使用 chrome.storage 持久化？
-- [ ] 是否考虑了 Service Worker 的短生命周期？
-
-### IndexedDB 性能
-
-**重要：** 大数据量需要优化，避免全量加载和内存过滤。
-
-```javascript
-// ❌ 错误：全量加载
-const records = await db.records.toArray();
-const filtered = records.filter(r => r.emotionTags.includes('后悔'));
-
-// ✅ 正确：使用索引查询
-const records = await db.records
-  .where('emotionTags')
-  .equals('后悔')
-  .toArray();
-```
-
-**检查清单：**
-- [ ] 是否使用索引查询而不是全量加载？
-- [ ] 大数据量是否使用游标分页？
-- [ ] 聚合操作是否使用 Dexie 的游标机制？
-
-### 异常处理
-
-**重要：** 所有异步操作都需要 try/catch，考虑边界条件和异常情况。
-
-```javascript
-// ❌ 错误：乐观假设
-async function handleSeal() {
-  await addRecord(record);
-  setSealed(true);
-}
-
-// ✅ 正确：防御性编程
-async function handleSeal() {
-  try {
-    await addRecord(record);
-    setSealed(true);
-  } catch (error) {
-    console.error('Failed to save record:', error);
-    showError('保存失败，请重试');
-  }
-}
-```
-
-**检查清单：**
-- [ ] 所有异步操作是否有 try/catch？
-- [ ] 网络请求是否有超时机制？
-- [ ] 是否验证了 API 响应的结构？
-- [ ] 错误信息是否用户友好？
-
-### 安全编码
-
-**重要：** 端侧代码必须考虑安全问题。
-
-```javascript
-// ❌ 错误：baseUrl 没有验证
-const response = await fetch(`${config.baseUrl}/v1/chat/completions`);
-
-// ✅ 正确：验证 baseUrl
-function validateBaseUrl(url) {
-  const parsed = new URL(url);
-  if (parsed.protocol !== 'https:') {
-    throw new Error('必须使用 HTTPS');
-  }
-  return true;
-}
-```
-
-**检查清单：**
-- [ ] API Key 是否安全存储？
-- [ ] baseUrl 是否验证了 HTTPS？
-- [ ] 用户输入是否有长度限制？
-- [ ] AI 响应是否清理后存储？
-- [ ] 是否有 Content Security Policy？
+**详细检查清单：** `docs/checklists/` 目录（按需加载）
 
 ## Agent skills
 
